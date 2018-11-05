@@ -117,14 +117,12 @@
 
 * Return_rsc(...)
 
-	* member가 library에 resource를 반납하는 요청을 했을 떄 그것을 처리해 주는 함수이다. member의 반납이 제대로 이루어 지지 않은 경우 각 상황에 맞게 문자열을 출력해 준다. 만일 member가 resource를 반납 기한 보다 늦게 반납한 경우, member의 disable을 업데이트 하고 대출이 제한되는 날짜를 출력해 준다. 제 때에 반납한 경우 `Success`를 출력한다. 반납을 마친 뒤에는 member의 book_name, lent_date resource의 isborrowed, user, return_date를 업데이트 해준다.
+	* member가 library에 resource를 반납하는 요청을 했을 떄 그것을 처리해 주는 함수이다. member의 반납이 제대로 이루어 지지 않은 경우 각 상황에 맞게 문자열을 출력해 준다. 만일 member가 resource를 반납 기한 보다 늦게 반납한 경우, member의 disable을 업데이트 하고 대출이 제한되는 날짜를 출력해 준다. 제 때에 반납한 경우 `Success.`를 출력한다. 반납을 마친 뒤에는 member의 book_name, lent_date resource의 isborrowed, user, return_date를 업데이트 해준다.
 
 * process()
 
-	* `input.dat` 파일의 내용을 읽어들여 member의 요청을 처리한다. member가 책을 빌리는 요청을 했을 경우 Borrow_rsc 함수를, 반납하는 요청을 했을 경우 Return_rsc 함수를 호출한다.
-
+	* `input.dat` 파일의 내용을 읽어들여 member의 요청을 처리한 후 그 결과를 `output.dat`에 출력한다. 출력 결과는 예시 파일에 맞췄다. member가 책을 빌리는 요청을 했을 경우 Borrow_rsc 함수를, 반납하는 요청을 했을 경우 Return_rsc 함수를 호출한다.
 ## Building
 
 * It is simple. just type `make`. Then the executable file, name `hw1`, is made.
-* And type `./hw1` for executing.
-
+* And type `./hw1` for executing.gk
