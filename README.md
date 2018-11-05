@@ -78,7 +78,7 @@
 * member와 resource 객체들을 관리해 주는 클래스 이다.
 
 * variable
-	* mem : member 클래스와 그 클래스를 상속받는 클래스들을 저장하는 배열이.
+	* mem : member 클래스와 그 클래스를 상속받는 클래스들을 저장하는 배열이다.
 	* rsc : resource 클래스와 그 클래스를 상속받는 클래스들을 저장하는 배열이다.
 
 * library()
