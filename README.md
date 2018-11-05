@@ -6,6 +6,8 @@
 
 ---
 
+* 날짜를 년, 월, 일로 구분하여 저장해 주는 클래스이다.
+
 * variable
 	* y : year
 	* m : month
@@ -17,6 +19,8 @@
 ### member
 
 ---
+
+* library 이용자의 정보를 저장하는 클래스이다.
 
 * variable
 	* type : member가 상속 되었을 때, 상속 받은 클래스의 이름
@@ -50,6 +54,8 @@
 
 ---
 
+* library에 보관되는 책의 정보를 저장하는 클래스이다.
+
 * variable
 	* type : member가 상속 되었을 때, 상속 받은 클래스의 이름
 	* name : resource의 이름
@@ -75,7 +81,7 @@
 
 ---
 
-* member와 resource 객체들을 관리해 주는 클래스 이다.
+* member와 resource 객체들을 관리해 주는 클래스 이다. member와 resource에 관련된 요청은 이 클래스를 통해서 처리된다.
 
 * variable
 	* mem : member 클래스와 그 클래스를 상속받는 클래스들을 저장하는 배열이다.
