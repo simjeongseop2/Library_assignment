@@ -13,7 +13,7 @@ bool member::is_able(date today) {
 	else if(disable.y == today.y) {
 		if(disable.m > today.m)
 			return false;
-		else if(disable.m == today.m && disable.d > today.d)
+		else if(disable.m == today.m && disable.d >= today.d)
 			return false;
 	}
 	return true;
