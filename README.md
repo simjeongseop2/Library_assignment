@@ -54,7 +54,7 @@
 
 ---
 
-* library에 보관되는 책의 정보를 저장하는 클래스이다.
+* library에 보관되는 resource의 정보를 저장하는 클래스이다.
 
 * variable
 	* type : member가 상속 되었을 때, 상속 받은 클래스의 이름
@@ -71,11 +71,11 @@
 
 ---
 
-* resorce 클래스를 상속받는 클래스이다.
+* resource 클래스를 상속받는 클래스이다.
 
 * book(string name)
 
-	* 유저의 이름을 받아 객체를 초기화 한다. type은 Book으로 초기화 한다.
+	* 책의 이름을 받아 객체를 초기화 한다. type은 Book으로 초기화 한다.
 
 ### library
 
@@ -84,8 +84,8 @@
 * member와 resource 객체들을 관리해 주는 클래스 이다. member와 resource에 관련된 요청은 이 클래스를 통해서 처리된다.
 
 * variable
-	* mem : member 클래스와 그 클래스를 상속받는 클래스들을 저장하는 배열이다.
-	* rsc : resource 클래스와 그 클래스를 상속받는 클래스들을 저장하는 배열이다.
+	* mem : member 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다.
+	* rsc : resource 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다.
 
 * library()
 
@@ -125,4 +125,4 @@
 ## Building
 
 * It is simple. just type `make`. Then the executable file, name `hw1`, is made.
-* And type `./hw1` for executing.gk
+* And type `./hw1` for executing
