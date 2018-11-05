@@ -78,7 +78,7 @@ void library::Borrow_rsc(ofstream& output,string rsc_type, string rsc_name,
 			mem.push_back(m = new undergraduate(mem_name));
 	}
 	if(m->max_num == m->book_name.size()) {
-		output << cnt << "\t2\tExceeds your possible number of borrow. Possible# of borrows: " << m->max_num << endl;
+		output << cnt << "\t2\tExceeds your possible number of borrow. Possible # of borrows: " << m->max_num << endl;
 		return;
 	}
 	for(int i = 0; i < m->book_name.size(); i++)
@@ -128,7 +128,7 @@ void library::Return_rsc(ofstream& output, string rsc_type, string rsc_name,
 		date disable = date_plus(dat, diff);
 		if(disable > m->disable)
 			m->disable = disable;
-		output << cnt << "\t7\tDelayed return. You'll be resricted untile " << DATEtoSTRING(disable) << endl;
+		output << cnt << "\t7\tDelayed return. You'll be restricted until " << DATEtoSTRING(disable) << endl;
 	}
 	else
 		output << cnt << "\t0\tSuccess.\n";
