@@ -25,7 +25,7 @@
 	* max_lent : 최대로 빌릴 수 있는 기간
 	* book_name : 빌린 책의 이름
 	* lent_date : 책을 빌린 날짜
-	* disable : 이용 불가능한 날짜 disable에 저장된 날짜 다음 날 부터 이용 가능
+	* disable : 이용 불가능한 날짜. disable에 저장된 날짜 다음 날 부터 이용 가능
 
 * member(string type, string name, int max_num, int max_lent)
 
