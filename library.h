@@ -25,9 +25,9 @@ public:
 	void Borrow_rsc(ofstream& output,string rsc_type, string rsc_name, string mem_type, string mem_name, date dat, int cnt);
 	void Return_rsc(ofstream& output, string rsc_type, string rsc_name, string mem_type, string mem_name, date dat, int cnt);
 	void Borrow_spc(ofstream& output, string spc_type, string mem_type, string mem_name,
-			int spc_num, int num_of_mem, int borrow_time, date dat);
+			int spc_num, int num_of_mem, int borrow_time, date dat, int cnt);
 	void REC_spc(ofstream& output, string oper, string spc_type, string mem_type, string mem_name,
-					int spc_num, date dat);
+					int spc_num, date dat, int cnt);
 	void process();
 };
 #endif

@@ -1,0 +1,6 @@
+Op_#	Return_code	Description
+1	0	Success.
+2	10	You did not borrow this space.
+3	8	Invalid space id.
+4	1	Non exist resource.
+5	9	This space is not available now. Available from 09 to 21.
