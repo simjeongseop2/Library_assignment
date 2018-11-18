@@ -15,5 +15,10 @@ public:
 			return true;
 		return false;
 	}
+	bool operator==(const date& ref) {
+		if(y == ref.y && m == ref.m && d == ref.d)
+			return true;
+		return false;
+	}
 };
 #endif
