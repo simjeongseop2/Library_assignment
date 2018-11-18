@@ -17,15 +17,35 @@ library::library() {
 		}
 	}
 	source.close();
+	spc.resize(13);
+	for(int i = 0; i < 10; i++)
+		spc[i] = new study_room;
+	spc[10] = new seat(0, 24);
+	spc[11] = new seat(9, 21);
+	spc[12] = new seat(9, 18);
 }
 int library::CHARtoINT(const string& str) {
 	return (str[0] - '0') * 10 + (str[1] - '0');
+}
+char* library::INTtoSTRING(int n) {
+	char* ret = new char[2];
+	ret[0] = ((n / 10) % 10) + '0';
+	ret[1] = (n % 10) + '0';
+	return ret;
 }
 date library::make_date(const string& str) {
 	date ret;
 	ret.y = CHARtoINT(str.substr(0, 2));
 	ret.m = CHARtoINT(str.substr(3, 2));
 	ret.d = CHARtoINT(str.substr(6, 2));
+	return ret;
+}
+date library::make_space_date(const string& str) {
+	date ret;
+	ret.y = (str[0] - '0') * 1000 + (str[1] - '0') * 100 + CHARtoINT(str.substr(2, 2));
+	ret.m = CHARtoINT(str.substr(5, 2));
+	ret.d = CHARtoINT(str.substr(8, 2));
+	ret.t = CHARtoINT(str.substr(11, 2));	
 	return ret;
 }
 string library::DATEtoSTRING(date& dat) {
@@ -143,10 +163,97 @@ void library::Return_rsc(ofstream& output, string rsc_type, string rsc_name,
 	rsc[idx]->user = "NULL";
 	rsc[idx]->return_date = dat;
 }
+
+void library::Borrow_spc(ofstream& output, string spc_type, string mem_type, string mem_name,
+			int spc_num, int num_of_mem, int borrow_time, date dat) {
+	spc_num--;
+	if(spc_type == "Seat") { spc_num += 10; }
+	if((spc_type == "StudyRoom" && (spc_num < 0 || spc_num >= 10)) ||
+		(spc_type == "Seat" && (spc_num < 10 || spc_num >= 13))) {
+		output << "Invalid space id." << endl; return;
+	}
+	printf("pass1\n");
+	if(dat.t >= spc[spc_num]->close_time || dat.t < spc[spc_num]->open_time) {
+		printf("pass2\n");
+		output << "This space is not available now. Available from " << INTtoSTRING(spc[spc_num]->open_time)
+		 << " to " << INTtoSTRING(spc[spc_num]->close_time) << ".\n";
+		return;
+	}	
+	//printf("pass1\n");
+	for(int i = 0; i < spc.size(); i++)
+		spc[i]->update(dat);
+	//printf("pass2\n");
+	bool already_borrow = false;
+	int sidx = 10, fidx = 12;
+	if(spc_type == "StudyRoom") {
+		sidx = 0; fidx = 9;
+	}
+	for(int i = sidx; i <= fidx; i++)
+			if(spc[i]->isThereUser(mem_name))
+				already_borrow = true;
+	if(already_borrow) {
+		output << "You already borrowed this kind of space." << endl; return;
+	}
+	if(num_of_mem > spc[spc_num]->max_num) {
+		output << "Exceed available number." << endl; return;
+	}
+	bool time_exceed = false;
+	if(spc_type == "Seat" && mem_type == "Undergraduate" && borrow_time > 3) //undergraduate can borrow seat for max 3 hours
+		time_exceed = true;
+	if(time_exceed || borrow_time > spc[spc_num]->max_time) { 
+		output << "Exceed available time." << endl; return;
+	}
+	bool nospace = false, notime = false;
+	if(spc_type == "StudyRoom") {
+		if(spc[spc_num]->user.size() != 0)
+			nospace = true;
+	}
+	else if(spc_type == "Seat") {
+		if(spc[spc_num]->empty_num < num_of_mem)
+			nospace = true;
+	}
+	if(dat.t + borrow_time > spc[spc_num]->close_time)
+		notime = true;
+	if(nospace) {
+		output << "There is no remain space. This space is available after "
+		 << spc[spc_num]->return_available_time(dat.t, num_of_mem) <<".\n"; return;
+	}
+	if(notime) {
+		borrow_time = spc[spc_num]->close_time - dat.t; 
+	}
+	printf("time : %d, borrow_time: %d\n", dat.t, borrow_time);
+	spc[spc_num]->borrow_space(mem_name , num_of_mem, dat, borrow_time);
+	cout << spc[spc_num]->user[0].end.t << endl;
+	output << "Success." << endl;
+}
+
+void library::REC_spc(ofstream& output, string oper, string spc_type, string mem_type, string mem_name,
+							int spc_num, date dat) {
+	spc_num--;
+	for(int i = 0; i < spc.size(); i++)
+		spc[i]->update(dat);
+	if(spc_type == "Seat") { spc_num += 10; }
+	if((spc_type == "StudyRoom" && (spc_num < 0 || spc_num >= 10)) ||
+		(spc_type == "Seat" && (spc_num < 10 || spc_num >= 13))) {
+		output << "Invalid space id." << endl; return;
+	}
+	if(!spc[spc_num]->isThereUser(mem_name)) {
+		output << "You did not borrow this space." << endl; return;
+	}
+	if(oper == "R")
+		spc[spc_num]->return_space(mem_name);
+	else if(oper == "E")
+		spc[spc_num]->empty_space(mem_name, dat);
+	else if(oper == "C")
+		spc[spc_num]->comback_space(mem_name);
+	output << "Success." << endl;
+}
 						
 void library::process() {
 	ifstream input;
 	input.open("input.dat");
+	ifstream space;
+	space.open("space.dat");
 	ofstream output; 
 	output.open("output.dat");
 	output << "Op_#\tReturn_code\tDescription\n";
@@ -166,5 +273,29 @@ void library::process() {
 			Return_rsc(output, rsc_type, rsc_name, mem_type, mem_name, dat, cnt);
 		cnt++;
 	}
-	input.close(); output.close();
+	
+	for(int i = 0; i < 8; i++) { space >> str; cout << str << endl; } //get dump
+	while(1) {
+		space >> str;
+		if(space.eof())
+			break;
+		cout << str << endl;
+		date dat = make_space_date(str);
+		printf("y: %d, m : %d, d : %d, t : %d\n", dat.y, dat.m, dat.d, dat.t);
+		string spc_type, oper, mem_type, mem_name;
+		int spc_num, num_of_mem, borrow_time;	
+		space >> spc_type >> spc_num >> oper >> mem_type >> mem_name;
+		cout << spc_type << " " << spc_num << " " << oper << " " << mem_type << " " << mem_name << " ";
+		if(oper == "B") {
+			space >> num_of_mem >> borrow_time;
+			cout << num_of_mem << " " << borrow_time << endl;
+			Borrow_spc(output, spc_type, mem_type, mem_name,
+						spc_num, num_of_mem, borrow_time, dat);
+		}
+		else {
+			REC_spc(output, oper, spc_type, mem_type, mem_name,
+						spc_num, dat);
+		}
+	}
+	input.close(); space.close(); output.close();
 }
