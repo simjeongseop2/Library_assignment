@@ -1,5 +1,5 @@
-#ifndef __MEMBER_H__
-#define __MEMBER_H__
+#ifndef __SPACE_H__
+#define __SPACE_H__
 #include <vector>
 #include <string>
 #include "date.h"
