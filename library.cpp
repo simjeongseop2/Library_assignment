@@ -194,7 +194,7 @@ void library::Borrow_spc(ofstream& output, string spc_type, string mem_type, str
 	if(already_borrow) {
 		output << cnt << "\t11\tYou already borrowed this kind of space." << endl; return;
 	}
-	if(num_of_mem > spc[spc_num]->max_num) {
+	if(num_of_mem > spc[spc_num]->max_num || (spc_type == "Seat" && num_of_mem > 1)) { /////////////////////////////////////////////////
 		output << cnt << "\t12\tExceed available number." << endl; return;
 	}
 	bool time_exceed = false;
@@ -266,7 +266,7 @@ void library::process() {
 	bool space_received = false;
 	while(1) {
 		if(input_finished == false && input_received == false) {
-			input >> str; cout << str << endl;
+			input >> str;
 			if(!input.eof() && (str[0] >= '0' && str[0] <= '9')) {
 				dat1 = make_date(str);
 				dat1.y += 2000;
@@ -276,7 +276,7 @@ void library::process() {
 				input_finished = true;
 		}
 		if(space_finished == false && space_received == false) {
-			space >> str; cout << str << endl;
+			space >> str;
 			if(!space.eof() && (str.size() >= 12)) {
 				dat2 = make_space_date(str);
 				space_received = true;
@@ -314,7 +314,5 @@ void library::process() {
 			cnt++;
 		}
 	}
-	
-	
 	input.close(); output.close(); space.close();
 }
