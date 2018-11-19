@@ -12,7 +12,7 @@
 	* y : year
 	* m : month
 	* d : day
-	* y : second
+	* t : second
 
 * date(int y, int m, int d)
 
