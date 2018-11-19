@@ -30,4 +30,5 @@ public:
 					int spc_num, date dat, int cnt);
 	void process();
 };
+
 #endif
