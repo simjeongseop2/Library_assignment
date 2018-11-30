@@ -100,8 +100,12 @@ void library::Borrow_rsc(ofstream& output,string rsc_type, string rsc_name,
 	if(m == NULL) {
 		if(mem_type == "Undergraduate")
 			mem.push_back(m = new undergraduate(mem_name));
+		else if(mem_type == "Graduate")
+			mem.push_back(m = new graduate(mem_name));
+		else
+			mem.push_back(m = new faculty(mem_name));
 	}
-	if(m->max_num == m->book_name.size()) {
+	if(m->max_num == m->book_name.size() && rsc_type != "E-book") {
 		output << cnt << "\t2\tExceeds your possible number of borrow. Possible # of borrows: " << m->max_num << endl;
 		return;
 	}
@@ -110,7 +114,7 @@ void library::Borrow_rsc(ofstream& output,string rsc_type, string rsc_name,
 			output << cnt << "\t4\tYou already borrowed this book at " << DATEtoSTRING(m->lent_date[i]);
 			return;
 		}
-	if(rsc[idx]->isborrowed) {
+	if(rsc[idx]->isborrowed && rsc_type != "E-book") {
 		output << cnt << "\t5\tOther member already borrowed this book. This book will be returned at " << DATEtoSTRING(rsc[idx]->return_date) << endl;
 		return;
 	}
@@ -147,7 +151,7 @@ void library::Return_rsc(ofstream& output, string rsc_type, string rsc_name,
 		if(mem[i]->name == mem_name && mem[i]->type == mem_type) {
 			m = mem[i]; break;
 		}
-	if(dat > rsc[idx]->return_date) {
+	if(dat > rsc[idx]->return_date &&  rsc_type != "E-book") {
 		int diff = date_diff(dat, rsc[idx]->return_date);
 		date disable = date_plus(dat, diff);
 		if(disable > m->disable)
