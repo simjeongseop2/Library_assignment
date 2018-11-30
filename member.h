@@ -25,4 +25,14 @@ public:
 	undergraduate(string name);
 };
 
+class graduate : public member {
+	graduate() {}
+	graduate(string name);
+};
+
+class faculty : public member {
+	faculty() {}
+	faculty(string name);
+}; 
+
 #endif

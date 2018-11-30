@@ -20,3 +20,5 @@ bool member::is_able(date today) {
 }
 
 undergraduate::undergraduate(string name) : member("Undergraduate", name, 1, 14) {}
+graduate::graduate(string name) : member("Graduate", name, 5, 30) {}
+faculty::faculty(string name) : member("Faculty", name, 10, 30) {}
