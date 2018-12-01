@@ -1,0 +1,9 @@
+Op_#	Return_code	Description
+1	-1	Date out of range
+2	-1	Non-exist space type
+3	-1	Non-exist operation
+4	-1	Non-exst member type
+5	0	Success.
+6	-1	Member name with numbers
+7	-1	Negative time
+8	0	Success.

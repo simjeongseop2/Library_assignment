@@ -297,6 +297,27 @@ void library::REC_spc(ofstream& output, string oper, string spc_type, string mem
 		spc[spc_num]->comback_space(mem_name);
 	output << cnt << "\t0\tSuccess." << endl;
 }
+
+void library::ThrowFunc(string spc_type, string mem_type, 
+					string mem_name, string oper, date dat, int borrow_time) {
+	date cut_line;
+	cut_line.y = 2009; cut_line.m = 12; cut_line.d = 30;
+	if(cut_line > dat || cut_line == dat)
+		throw 0;
+	else if(spc_type != "Seat" && spc_type != "StudyRoom")
+		throw 1;
+	else if(oper != "R" && oper != "E" && oper != "C" && oper != "B")
+		throw 2;
+	else if(mem_type != "Undergraduate" && mem_type != "Graduate" && mem_type != "Faculty")
+		throw 3;
+	for(int i = 0; i < mem_name.size(); i++) {
+		if(mem_name[i] >= '0' && mem_name[i] <= '9')
+			throw 4;
+	}
+	if(borrow_time < 0)
+		throw 5;
+
+}
 						
 void library::process() {
 	ifstream input;
@@ -346,24 +367,41 @@ void library::process() {
 				Borrow_rsc(output, rsc_type, rsc_name, mem_type, mem_name, dat1, cnt);
 			else
 				Return_rsc(output, rsc_type, rsc_name, mem_type, mem_name, dat1, cnt);
-			cnt++;
 		}
 		else {
-			space_received = false;
-			string spc_type, oper, mem_type, mem_name;
-			int spc_num, num_of_mem, borrow_time;	
-			space >> spc_type >> spc_num >> oper >> mem_type >> mem_name;
-			if(oper == "B") {
-				space >> num_of_mem >> borrow_time;
-				Borrow_spc(output, spc_type, mem_type, mem_name,
-							spc_num, num_of_mem, borrow_time, dat2, cnt);
+			try {
+				space_received = false;
+				string spc_type, oper, mem_type, mem_name;
+				int spc_num, num_of_mem, borrow_time;	
+				space >> spc_type >> spc_num >> oper >> mem_type >> mem_name;
+				if(oper == "B") {
+					space >> num_of_mem >> borrow_time;
+					ThrowFunc(spc_type, mem_type, mem_name, oper, dat2, borrow_time);
+					Borrow_spc(output, spc_type, mem_type, mem_name,
+								spc_num, num_of_mem, borrow_time, dat2, cnt);
+				}
+				else {
+					ThrowFunc(spc_type, mem_type, mem_name, oper, dat2, borrow_time);
+					REC_spc(output, oper, spc_type, mem_type, mem_name,
+								spc_num, dat2, cnt);
+				}
+			} catch(int expn) {
+				if(expn == 0)
+					output << cnt << "\t-1\tDate out of range" << endl;
+				else if(expn == 1)
+					output << cnt << "\t-1\tNon-exist space type" << endl;
+				else if(expn == 2)
+					output << cnt << "\t-1\tNon-exist operation" << endl;
+				else if(expn == 3)
+					output << cnt << "\t-1\tNon-exist member type" << endl;
+				else if(expn == 4)
+					output << cnt << "\t-1\tMember name with numbers" << endl;
+				else if(expn == 5)
+					output << cnt << "\t-1\tNegative time" << endl;
+
 			}
-			else {
-				REC_spc(output, oper, spc_type, mem_type, mem_name,
-							spc_num, dat2, cnt);
-			}
-			cnt++;
 		}
+		cnt++;
 	}
 	input.close(); output.close(); space.close();
 }

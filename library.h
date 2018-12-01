@@ -29,6 +29,7 @@ public:
 	void REC_spc(ofstream& output, string oper, string spc_type, string mem_type, string mem_name,
 					int spc_num, date dat, int cnt);
 	void process();
+	void ThrowFunc(string spc_type, string mem_type, string mem_name, string oper, date dat, int borrow_time);
 };
 
 #endif
