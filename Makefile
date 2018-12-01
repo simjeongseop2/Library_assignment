@@ -10,7 +10,7 @@ main.o : member.h resource.h date.h library.h space.h main.cpp
 member.o : member.h date.h member.cpp
 	$(CXX) -c -o member.o member.cpp
 
-resource.o : resource.h date.h resource.cpp
+resource.o : member.h resource.h date.h resource.cpp
 	$(CXX) -c -o resource.o resource.cpp
 
 space.o : space.h date.h space.cpp
