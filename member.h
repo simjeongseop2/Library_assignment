@@ -14,6 +14,8 @@ public:
 	vector<string> book_name;
 	vector<date> lent_date;
 	date disable; //available date
+	int max_capacity;
+	int now_capacity;
 	member();
 	member(string type, string name, int max_num, int max_lent);
 	bool is_able(date today);
@@ -26,11 +28,13 @@ public:
 };
 
 class graduate : public member {
+public:
 	graduate() {}
 	graduate(string name);
 };
 
 class faculty : public member {
+public:
 	faculty() {}
 	faculty(string name);
 }; 

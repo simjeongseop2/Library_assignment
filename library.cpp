@@ -16,6 +16,16 @@ library::library() {
 			book* temp = new book(str);
 			rsc.push_back(temp);
 		}
+		else if(str == "Magazine") {
+			source >> str;
+			magazine* temp = new magazine(str);
+			rsc.push_back(temp);
+		}
+		else {	//E-book name + capacity -> okay
+			source >> str;
+			e_book* temp = new e_book(str);
+			rsc.push_back(temp);
+		}
 		before = str;
 	}
 	source.close();
@@ -81,10 +91,22 @@ int library::date_diff(date dat1, date dat2) { //dat1 > dat2
 }
 void library::Borrow_rsc(ofstream& output,string rsc_type, string rsc_name,
 						string mem_type, string mem_name, date dat, int cnt) {
+	for(int i = 0; i < rsc.size(); i++)
+		rsc[i]->update(dat);
 	int idx = -1;
-	for(int i = 0; i < rsc.size(); i++) {
-		if(rsc[i]->type == rsc_type &&
-			rsc[i]->name == rsc_name) {
+	date m_date;
+	string origin_rsc_name = rsc_name;
+	if(rsc_type == "Magazine") {
+		int i = 0;
+		for(i = 0; i < rsc_name.size(); i++)
+			if(rsc_name[i] == '[')
+				break;
+		m_date.y = CHARtoINT(rsc_name.substr(i+1, 2));
+		m_date.m = CHARtoINT(rsc_name.substr(i+4, 2));
+		rsc_name = rsc_name.substr(0, i); 
+	}
+	for(int i = 0; i < rsc.size(); i++) {		//Magazine name! if 1 year differ idx = -1 break;
+		if(rsc[i]->type == rsc_type && rsc[i]->isSame(rsc_name, dat, m_date)) {
 			idx = i; break;
 		}
 	}
@@ -108,51 +130,85 @@ void library::Borrow_rsc(ofstream& output,string rsc_type, string rsc_name,
 	if(m->max_num == m->book_name.size() && rsc_type != "E-book") {
 		output << cnt << "\t2\tExceeds your possible number of borrow. Possible # of borrows: " << m->max_num << endl;
 		return;
-	}
-	for(int i = 0; i < m->book_name.size(); i++)
-		if(rsc_name == m->book_name[i]) {
-			output << cnt << "\t4\tYou already borrowed this book at " << DATEtoSTRING(m->lent_date[i]);
+	} //if e-book, return code 15 -> "Exceeds your storage capacity"
+	for(int i = 0; i < m->book_name.size(); i++) {
+		if(rsc[idx]->isSame(m->book_name[i], dat, m_date) && rsc[idx]->already_borrow(m, m_date)) { //if magazine, check public_date!
+			output << cnt << "\t4\tYou already borrowed this book at " << DATEtoSTRING(m->lent_date[i]) << endl;
 			return;
 		}
-	if(rsc[idx]->isborrowed && rsc_type != "E-book") {
-		output << cnt << "\t5\tOther member already borrowed this book. This book will be returned at " << DATEtoSTRING(rsc[idx]->return_date) << endl;
+	}
+	if(rsc[idx]->return_isborrowed(m_date) && rsc_type != "E-book") { //if magazine, check public_date!
+		date return_date = rsc[idx]->find_return_date(m_date, origin_rsc_name);
+		output << cnt << "\t5\tOther member already borrowed this book. This book will be returned at " << DATEtoSTRING(return_date) << endl;
 		return;
 	}
 	if(!m->is_able(dat)) {
 		output << cnt << "\t6\tRestricted member until " << DATEtoSTRING(m->disable) << endl;
 		return;
 	}
-	m->book_name.push_back(rsc_name);
-	m->lent_date.push_back(dat);
-	rsc[idx]->isborrowed = true;
-	rsc[idx]->user = mem_name;
-	rsc[idx]->return_date = date_plus(dat, m->max_lent - 1);
+	if(rsc_type == "E-book" && (m->now_capacity + rsc[idx]->capacity > m->max_capacity)) {
+		output << cnt << "\t15\tExceeds your storage capacity." << endl;
+		return;
+	}
+	rsc[idx]->borrow_rsc(m, dat, m_date, origin_rsc_name);
 	output << cnt << "\t0\tSuccess.\n";
 	return;
 }
 void library::Return_rsc(ofstream& output, string rsc_type, string rsc_name,
 			string mem_type, string mem_name, date dat, int cnt) {
-	int idx = -1;
+	//rsc update!!!
 	for(int i = 0; i < rsc.size(); i++)
-		if(rsc[i]->type == rsc_type &&
-			rsc[i]->name == rsc_name) {
+		rsc[i]->update(dat);
+	int idx = -1;
+	date m_date;
+	string origin_rsc_name = rsc_name;
+	if(rsc_type == "Magazine") {
+		int i = 0;
+		for(i = 0; i < rsc_name.size(); i++)
+			if(rsc_name[i] == '[')
+				break;
+		m_date.y = CHARtoINT(rsc_name.substr(i+1, 2));
+		m_date.m = CHARtoINT(rsc_name.substr(i+4, 2));
+		rsc_name = rsc_name.substr(0, i); 
+	}
+	for(int i = 0; i < rsc.size(); i++) {//Magazine name! if 1 year differ idx = -1 break;
+		if(rsc[i]->type == rsc_type && rsc[i]->isSame(rsc_name, dat, m_date)) {
 			idx = i; break;
 		}
-	if(idx == -1) {
-		output << cnt << "\t1\tNon exist resource.\n"; 
-		return;
-	}
-	if(rsc[idx]->user != mem_name) {
-		output << cnt << "\t3\tYou did not borrow this book.\n";
-		return;
 	}
 	member* m = NULL;
 	for(int i = 0; i < mem.size(); i++)
 		if(mem[i]->name == mem_name && mem[i]->type == mem_type) {
 			m = mem[i]; break;
 		}
-	if(dat > rsc[idx]->return_date &&  rsc_type != "E-book") {
-		int diff = date_diff(dat, rsc[idx]->return_date);
+	if(m == NULL) {
+		if(mem_type == "Undergraduate")
+			mem.push_back(m = new undergraduate(mem_name));
+		else if(mem_type == "Graduate")
+			mem.push_back(m = new graduate(mem_name));
+		else
+			mem.push_back(m = new faculty(mem_name));
+	}
+	int bidx = -1;		/////return_rsc!!
+	for(int i = 0; i < m->book_name.size(); i++)
+		if(m->book_name[i] == origin_rsc_name) {
+			bidx = i; break;
+		}
+	if(idx == -1 && bidx == -1) {
+		output << cnt << "\t1\tNon exist resource.\n"; 
+		return;
+	}
+	for(int i = 0; i < rsc.size(); i++) {//Magazine name! if 1 year differ idx = -1 break;
+		if(rsc[i]->type == rsc_type && rsc[i]->name == rsc_name) {
+			idx = i; break;
+		}
+	}
+	if(rsc[idx]->matching_user(m, m_date, origin_rsc_name) == false) { //rsc[idx]->matching_user(mem_name)
+		output << cnt << "\t3\tYou did not borrow this book.\n";
+		return;
+	}
+	if(dat > date_plus(m->lent_date[bidx], m->max_lent - 1) &&  rsc_type != "E-book") { ////if Magazin
+		int diff = date_diff(dat, date_plus(m->lent_date[bidx], m->max_lent - 1));
 		date disable = date_plus(dat, diff);
 		if(disable > m->disable)
 			m->disable = disable;
@@ -160,16 +216,7 @@ void library::Return_rsc(ofstream& output, string rsc_type, string rsc_name,
 	}
 	else
 		output << cnt << "\t0\tSuccess.\n";
-	int bidx = 0;
-	for(int i = 0; i < m->book_name.size(); i++)
-		if(m->book_name[i] == rsc_name) {
-			bidx = i; break;
-		}
-	m->book_name.erase(m->book_name.begin() + bidx);
-	m->lent_date.erase(m->lent_date.begin() + bidx);
-	rsc[idx]->isborrowed = false;
-	rsc[idx]->user = "NULL";
-	rsc[idx]->return_date = dat;
+	rsc[idx]->return_rsc(m, dat, m_date, origin_rsc_name, rsc_name, bidx);
 }
 
 void library::Borrow_spc(ofstream& output, string spc_type, string mem_type, string mem_name,
@@ -202,7 +249,7 @@ void library::Borrow_spc(ofstream& output, string spc_type, string mem_type, str
 		output << cnt << "\t12\tExceed available number." << endl; return;
 	}
 	bool time_exceed = false;
-	if(spc_type == "Seat" && mem_type == "Undergraduate" && borrow_time > 3) //undergraduate can borrow seat for max 3 hours
+	if(spc_type == "Seat" && borrow_time > 3)
 		time_exceed = true;
 	if(time_exceed || borrow_time > spc[spc_num]->max_time) { 
 		output << cnt << "\t13\tExceed available time." << endl; return;
