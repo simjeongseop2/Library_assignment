@@ -150,6 +150,12 @@ void library::Borrow_rsc(ofstream& output,string rsc_type, string rsc_name,
 		output << cnt << "\t15\tExceeds your storage capacity." << endl;
 		return;
 	}
+	for(int bidx = 0; bidx < m->lent_date.size(); bidx++) {
+		if(dat > date_plus(m->lent_date[bidx], m->max_lent - 1)) { ////if Magazin
+			output << cnt << "\t16\tPreviously borrowed books are overdue, so borrow is limited." << endl;
+			return;
+		}
+	}
 	rsc[idx]->borrow_rsc(m, dat, m_date, origin_rsc_name);
 	output << cnt << "\t0\tSuccess.\n";
 	return;
