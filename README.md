@@ -9,6 +9,7 @@
 * 날짜를 년, 월, 일, 시간으로 구분하여 저장해 주는 클래스이다.
 
 * variable
+
 	* y : year
 	* m : month
 	* d : day
@@ -29,6 +30,7 @@
 * library 이용자의 정보를 저장하는 클래스이다.
 
 * variable
+
 	* type : member가 상속 되었을 때, 상속 받은 클래스의 이름
 	* name : 사용자의 이름
 	* max_num : 최대로 빌릴 수 있는 권 수
@@ -85,6 +87,7 @@
 * library에 보관되는 resource의 정보를 저장하는 클래스이다.
 
 * variable
+
 	* type : member가 상속 되었을 때, 상속 받은 클래스의 이름
 	* name : resource의 이름
 	* isborrowed : resource가 대출된 상태일 경우 1, 아닐경우 0을 반환
@@ -182,6 +185,7 @@
 * member와 resource 객체들 그리고 space 객체들을 관리해 주는 클래스 이다. member와 resource, space에 관련된 요청은 이 클래스를 통해서 처리된다.
 
 * variable
+
 	* mem : member 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다.
 	* rsc : resource 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다.
 	* spc : space 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다.
@@ -222,6 +226,7 @@
 * Borrow_rsc(...)
 
 	* member가 library에 resource를 빌리는 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 resource를 해당 날짜, 요청에 맞게 업데이트 해준다.
+
 		* 빌리려는 책이 존재 하지 않는 경우 :  Non exist resource.
 		* max_num을 넘게 빌리려는 경우 : Exceeds your possible number of borrow...
 		* 이미 빌린 책을 또 빌리려는 경우 : You already borrowed this book at...
@@ -234,6 +239,7 @@
 * Return_rsc(...)
 
 	* member가 library에 resource를 반납하려는 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 resource를 해당 날짜, 요청에 맞게 업데이트 해준다.
+
 		* 빌리려는 책이 존재 하지 않는 경우 :  Non exist resource.
 		* 빌리지 않은 책을 반납하려는 경우 : You did not borrow this book.
 		* 반납일이 지난 상태에서 반납하려는 경우 : Delayed return. You'll be restricted until...
@@ -241,6 +247,7 @@
 
 * Borrow_spc(...)
 	* member가 library에 space를 빌리는 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 space를 해당 날짜, 요청에 맞게 업데이트 해준다.
+
 		* 유효하지 않은 id일 경우 : Invalid space id.
 		* 이용 시간이 아닌 경우 : This space is not available now. Available from...
 		* 이미 같은 종류의 space를 빌린 경우 : You already borrowed this kind of space.
@@ -258,6 +265,7 @@
 * ThrowFunc(...)
 
 	* space에 대한 요청에 대해서 예외 상황을 처리해 주는 함수이다. 다음 각 상황에 맞게 예외 문구를 출력해준다.
+
 		* 10/01/01 이전의 날짜가 들어온 경우 : Date out of range
 		* 존재하지 않는 space type일 경우 : Non-exist space type
 		* 존재하지 않는 operation일 경우 : Non-exist operation
