@@ -36,6 +36,8 @@
 	* book_name : 빌린 책의 이름
 	* lent_date : 책을 빌린 날짜
 	* disable : 이용 불가능한 날짜. disable에 저장된 날짜 다음 날 부터 이용 가능
+	* max_capacity : 최대로 빌릴 수 있는 E-book의 용량
+	* now_capacity : 현재 보유하고 있는 E-book의 용량
 
 * member(string type, string name, int max_num, int max_lent)
 
@@ -49,11 +51,31 @@
 
 ---
 
-* member 클래스를 상속받는 클래스이다.
+* member 클래스를 상속 받는 클래스이다.
 
 * undergraduate(string name)
 
-	* 유저의 이름을 받아 객체를 초기화 한다. type은 Undergraduate, max_num은 1, max_lent는 14로 초기화 한다.
+	* 유저의 이름을 받아 객체를 초기화 한다. type은 Undergraduate, max_num은 1, max_lent는 14로 초기화 한다. max_capacity를 100으로 초기화한다.
+
+### graduate
+
+---
+
+* member 클래스를 상속 받는 클래스이다.
+
+* graduate(string name)
+
+	* 유저의 이름을 받아 객체를 초기화 한다. type은 Graduate, max_num은 5, max_lent는 30으로 초기화 하고, max_capacity를 500으로 초기화 한다.
+
+### faculty
+
+---
+
+* member클래스를 상속 받는 클래스이다.
+
+* faculty(string name)
+
+	* 유저의 이름을 받아 객체를 초기화 한다. type은 Faculty, max_num은 10, max_lent는 30으로 초기화 하고, max_capacity를 1000으로 초기화 한다.
 
 
 ### resource
@@ -68,10 +90,44 @@
 	* isborrowed : resource가 대출된 상태일 경우 1, 아닐경우 0을 반환
 	* user : resource를 빌린 사람의 이름
 	* return_date : resource가 반납 되기로 되어있는 날짜
+	* capacity : resource의 용량을 나타내는 변수. e_book class에 사용된다.
 
 * resource(string type, string name)
 
 	* 매개 변수를 받아서 클래스 내의 각 변수를 초기화 한다.
+
+* bool isSame(string rsc_name, date now, date m_date)
+	
+	* resource의 이름을 받아 객체의 이름과 같은지 판단한 후, 같으면 true, 다르면 false를 리턴한다.
+
+* bool already_borrow(member* m, date m_date)
+
+	* resource가 이미 다른 멤버가 빌린 상태인지 아닌지를 판단하여 리턴해준다.
+
+*  bool return_isborrowed(date m_date)
+	
+	* resource의 isborrowed의 상태를 리턴한다.
+
+* void borrow_rsc(...)
+	
+	* resource를 빌리는 연산을 구현한 함수이다. 빌리는 member의 포인터를 받아 book_name과 lent_date를 추가해 준 후 resource의 변수들을 업데이트 한다.
+
+* void update(date now)
+	
+	* magazine 과 e_book class에 사용되는 함수이다. 멤버의 요청이 들어온 날짜를 받아, 해당 날짜에 맞게 객체의 변수들을 업데이트 해준다.
+
+
+* bool matching_user(...)
+
+	* member가 해당 resource를 빌리고 있는 상태인지를 판단해 true 또는 false를 리턴해 준다.
+
+* void return_rsc(...)
+
+	* resource를 반납하는 연산을 구현한 함수이다. 반납하는 member의 포인터를 받아 book_name과 lent_date를 제거해 준 후 resource의 변수들을 업데이트 한다.
+
+* date find_return_date(date m_date, string origin_name)
+
+	* resource가 
 
 ### book
 
@@ -83,11 +139,47 @@
 
 	* 책의 이름을 받아 객체를 초기화 한다. type은 Book으로 초기화 한다.
 
+### magazine
+
+---
+
+* resource 클래스를 상속받는 클래스이다. 객체 내에서 배열을 통해 월간호 별로 잡지들을 관리하며, 1년 이 지난 잡지들은 자동으로 폐기처리 된다.
+
+* variable
+
+	* date_arr : date 객체를 저장하기 위한 배열이다. magazine 클래스 내의 월간호들을 나타내는데 사용된다.
+
+	* mem_arr : member 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다. 각 월간호 들을 빌린 멤버들을 저장하는데 사용된다.
+
+* magazine(string name)
+	
+	* magazine의 이름을 받아 객체를 초기화 한다. type은 Magazine으로 최화 한다.
+
+* bool check_publication(date a, date b)
+
+	* 두 date 객체를 받아 서로 같은 연도와 월을 가지고 있다면 true, 아니면 false를 리턴한다. 같은 월간호 인지를 판단하는데 사용된다.
+
+### e_book
+
+---
+
+* resource 클래스를 상속받는 클래스이다. 용량만 된다면 다수의 멤버가 하나의 e_book을 빌릴 수 있으며, 반납일이 지난 e_book은 자동으로 반납처리 된다.
+
+* variable
+
+	* mem_arr : member 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다. e_book을 빌린 멤버들을 저장하는데 사용된다.
+
+	* ret_date_arr : date 객체들을 저장하는 배열이다. 각 멤버별 e_book이 반납되는 날짜들을 저장하는데 사용된다.
+
+* e_book(string n)
+
+	* e_book의 이름을 받아 객체를 초기화 한다. type은 E-book으로 하고, 이름에 같이 들어 있던 capacity를 잘라내어 e_book의 capacity를 초기화 해준다.
+
 ### library
 
 ---
 
-* member와 resource 객체들을 관리해 주는 클래스 이다. member와 resource에 관련된 요청은 이 클래스를 통해서 처리된다.
+* member와 resource 객체들 그리고 space 객체들을 관리해 주는 클래스 이다. member와 resource, space에 관련된 요청은 이 클래스를 통해서 처리된다.
 
 * variable
 	* mem : member 객체와 그 클래스를 상속받는 객체들을 저장하는 배열이다.
@@ -129,21 +221,53 @@
 
 * Borrow_rsc(...)
 
-	* member가 library에 resource를 빌리는 요청을 했을 때 그것을 처리해 주는 함수이다. member가 resource를 빌릴 수 없는 경우에는 각 상황에 맞게 문자를 출력해 준다. member가 resource를 빌리는데 성공 했을 경우, member의 book_name, lent_date와 resource의 isborrowed, user, return_date를 업데이트 한 뒤 `Success.`를 출력해 준다.
+	* member가 library에 resource를 빌리는 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 resource를 해당 날짜, 요청에 맞게 업데이트 해준다.
+		* 빌리려는 책이 존재 하지 않는 경우 :  Non exist resource.
+		* max_num을 넘게 빌리려는 경우 : Exceeds your possible number of borrow...
+		* 이미 빌린 책을 또 빌리려는 경우 : You already borrowed this book at...
+		* 다른 멤버기 이미 책을 빌린 경우 : Other member already borrowed this book...
+		* 연체로 인해 대여가 제한된 상태에서 빌리려는 경우 : Restricted member until...
+		* E-book의 경우, max_capacity를 넘게 빌리려는 경우 : Exceeds your storage capacity.
+		* 빌리고 있는 책의 반납일이 지난 상태에서 또 빌리려는 경우 : Previously borrowed books are overdue, so borrow is limited.
+		* 이 외의 경우 : Success.
 
 * Return_rsc(...)
 
-	* member가 library에 resource를 반납하는 요청을 했을 때  그것을 처리해 주는 함수이다. member의 반납이 제대로 이루어 지지 않은 경우 각 상황에 맞게 문자열을 출력해 준다. 만일 member가 resource를 반납 기한 보다 늦게 반납한 경우, member의 disable을 업데이트 하고 대출이 제한되는 날짜를 출력해 준다. 제 때에 반납한 경우 `Success.`를 출력한다. 반납을 마친 뒤에는 member의 book_name, lent_date resource의 isborrowed, user, return_date를 업데이트 해준다.
+	* member가 library에 resource를 반납하려는 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 resource를 해당 날짜, 요청에 맞게 업데이트 해준다.
+		* 빌리려는 책이 존재 하지 않는 경우 :  Non exist resource.
+		* 빌리지 않은 책을 반납하려는 경우 : You did not borrow this book.
+		* 반납일이 지난 상태에서 반납하려는 경우 : Delayed return. You'll be restricted until...
+		* 이 외의 경우 : Success.
 
 * Borrow_spc(...)
-	* member가 library에 space를 빌리는 요청을 했을 때 그것을 처리해 주는 함수이다. 빌리려는 space의 넘버가 범위를 벗어나거나, space를 이용할 수 없는 시간에 요청을 했을 경우 각 상황에 맞게 문자열을 출력해 준다. 만일 요청을한 멤버가 이미 같은 종류의 space를 빌리고 있는 상황이면 빌릴 수 없다는 문자를 출력해 주고, member가 요청 가능한 최대 멤버 수와 최대 시간을 초과하는 경우에도 그 경우 맞게 문자열을 출력한다. 현재 다른 멤버들이 사용하고 있어서 좌석을 예약할 수 없는 경우에는 예약 가능한 시간을 출력해 준다. 이외의 경우에는 member에게 그 space를 빌려주는 요청을 한 뒤, 성공했다는 문자열을 출력한다.
-
+	* member가 library에 space를 빌리는 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 space를 해당 날짜, 요청에 맞게 업데이트 해준다.
+		* 유효하지 않은 id일 경우 : Invalid space id.
+		* 이용 시간이 아닌 경우 : This space is not available now. Available from...
+		* 이미 같은 종류의 space를 빌린 경우 : You already borrowed this kind of space.
+		* 멤버별 최대 이용 좌석을 초과한 요청을 할 경우 : Exceed available number.
+		* 멤버별 최대 이용 시간을 초과한 요청을 할 경우 : Exceed available time.
+		* 남은 자리가 없는 경우 : There is no remain space. This space is available after...
+		* 이 외의 경우 : Success.
+		
 * REC_spc(...)
-	* member가 library에 space를 반납, 자리비움, 혹은 다시 자리로 돌아오느 요청을 했을 때 그것을 처리해 주는 함수이다. 만일 member가 요청한 space의 넘버가 범위를 벗어나거나, 현재 빌리고 있지 않은 space에 대하여 위의 요청을 할 경우 상황에 맞는 문자열을 출력해 준다. 이 외의 경우에는 반납, 자리비움, 다시 돌아옴 요청에 대하여 각각 space에 return_space, empty_space, comback_space 함수를 호출하여 요청을 처리 한 뒤에 성공했다는 문자열을 출력한다.
+	* member가 library에 space를 반납, empty, comback 요청을 했을 때 그것을 처리해 주는 함수이다. 다음 각 상황에 맞게 문자를 출력해 준 후 space를 해당 날짜, 요청에 맞게 업데이트 해준다.
+		* 유효하지 않은 id일 경우 : Invalid space id.
+		* 빌리지 않은 자리를 반납하려는 경우 : You did not borrow this space.
+		* 이 외의 경우 : Success.
+
+* ThrowFunc(...)
+
+	* space에 대한 요청에 대해서 예외 상황을 처리해 주는 함수이다. 다음 각 상황에 맞게 예외 문구를 출력해준다.
+		* 10/01/01 이전의 날짜가 들어온 경우 : Date out of range
+		* 존재하지 않는 space type일 경우 : Non-exist space type
+		* 존재하지 않는 operation일 경우 : Non-exist operation
+		* 존재하지 않는 member type일 경우 : Non-exist member type
+		* 멤버이름에 숫자가 포함된 경우 : Member name with numbers
+		* 음수의 시간이 들어온 경우 : Negative time
 
 * process()
 
-	* `input.dat` 파일과 `space.dat` 파일의 내용을 읽어들여 member의 요청을 처리한 후 그 결과를 `output.dat`에 출력한다. 출력 결과는 예시 파일에 맞췄다. 두 파일을 동시에 읽어 들이면서 날짜가 빠른 순으로 출력한다. 날짜가 같을 경우에는 `input.dat`의 요청을 먼저 처리한 뒤 `space.dat`의 요청을 처리한다.
+	* `input.dat` 파일과 `space.dat` 파일의 내용을 읽어들여 member의 요청을 처리한 후 그 결과를 `output.dat`에 출력한다. 출력 결과는 예시 파일에 맞췄다. 두 파일을 동시에 읽어 들이면서 날짜가 빠른 순으로 출력한다. 날짜가 같을 경우에는 `input.dat`의 요청을 먼저 처리한 뒤 `space.dat`의 요청을 처리한다. `space.dat`의 요청의 경우, ThrowFunc을 통해 예외 상황을 처리한다.
 
 ### space
 
@@ -200,7 +324,7 @@
 * space 클래스를 상속받는 클래스이다. 도서관 내의 열람실의 좌석을 나타낸다.
 
 * seat(int ot, int ct)
-	* 열람실의 오픈 시간과 마감 시간을 매개변수로 받아 각각 초기화 해준다. 좌석 갯수는 50개, undergraduate member의 경우 최대로 빌릴 수 있는 시간은 3시간으로 초기화 한다.
+	* 열람실의 오픈 시간과 마감 시간을 매개변수로 받아 각각 초기화 해준다. 좌석 갯수는 50개, 최대로 빌릴 수 있는 시간은 3시간으로 초기화 한다.
 
 * update(date d)
 	* date 클래스를 받아 해당 시간으로 seat 내의 좌석 정보를 업데이트 해준다. 좌석 예약 시간이 지난 멤버들과 자리를 비운 후 1시간 이상 돌아오지 않은 멤버들을 반납처리 해준다.
