@@ -30,7 +30,6 @@ public:
 	}
 	return today;
 }
-	virtual void update() { return; }
 	virtual bool isSame(string rsc_name, date now, date m_date) {
 		if(name == rsc_name)
 			return true;
