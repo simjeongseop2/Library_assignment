@@ -10,8 +10,8 @@
 #define MAX_BOOK_LEN 100
 using namespace std;
 
-int main(void) {
+int main(int argc, char** argv) {
 	library lib;
-	lib.process();
+	lib.process(argc, argv);
 	return 0;
 }

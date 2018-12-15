@@ -325,13 +325,20 @@ void library::ThrowFunc(string spc_type, string mem_type,
 
 }
 						
-void library::process() {
+void library::process(int argc, char** argv) {
 	ifstream input;
-	input.open("input.dat");
 	ifstream space;
-	space.open("space.dat");
-	ofstream output; 
-	output.open("output.dat");
+	ofstream output;
+	if(argc >= 3) {
+		input.open("new_input.dat");
+		space.open("new_space.dat");
+		output.open("new_output.dat");
+	}
+	else {
+		input.open("input.dat");
+		space.open("space.dat");
+		output.open("output.dat");
+	}
 	output << "Op_#\tReturn_code\tDescription\n";
 	string str;
 	for(int i = 0; i < 6; i++) { input >> str;} //get dump
